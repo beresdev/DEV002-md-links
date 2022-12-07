@@ -2,8 +2,8 @@ const fs = require('fs');
 const path = require('path');
 
 
-const readFile = (path) => {
-    fs.readFile(path, 'utf-8', (err, data) => {
+const readFile = (dir) => {
+    fs.readFile(dir, 'utf-8', (err, data) => {
         if(err) {
             console.log('erros: ', err)
         } else {
@@ -17,7 +17,24 @@ const readFile = (path) => {
     console.log(fileExtension)
  }
 
-module.exports = {readFile, extName};
+ const readDir = (dir) => {
+    let files = fs.readdirSync(dir, ['utf-8', true])
+    console.log(files)
+ }
+
+ const formatPaths = (pathObject) => {
+    let finalPath = path.format(pathObject);
+    console.log(finalPath);
+ }
+
+
+ const joinPaths = (string, string2) => {
+    let finalPath = path.join(string, string2);
+    console.log(finalPath);
+ }
+
+module.exports = {readFile, extName, readDir, formatPaths, joinPaths};
+
 
 
 

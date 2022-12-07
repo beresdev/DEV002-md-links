@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 
 
 const readFile = (path) => {
@@ -11,7 +12,12 @@ const readFile = (path) => {
     })
 }
 
-module.exports = {readFile};
+ const extName = (dir) => {
+    let fileExtension = path.extname(dir);
+    console.log(fileExtension)
+ }
+
+module.exports = {readFile, extName};
 
 
 

@@ -11,14 +11,10 @@
 
 // joinPaths('/home/Laboratoria/','/test');
 
-const {pathValidation, getLinks } = require('./main.js')
+const {pathValidation, getLinks, linksToObjects } = require('./main.js')
 
 let path = pathValidation('./md_files/file_1.md');
 
-// readFile('/home/beres/Laboratoria/Proyecto3_Mdlinks/DEV002-md-links/file 1.md')
-//     .then(console.log('Links obtenidos'))
-//     .catch(error => console.error(error));
-
 getLinks(path)
-    .then(data => console.log(data))
+    .then(data => linksToObjects(data,path))
     .catch(error => console.log(error));

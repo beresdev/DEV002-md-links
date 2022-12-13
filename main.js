@@ -17,14 +17,8 @@ function pathValidation(enteredPath) {
     }
 }
 
-// function readFile(enteredPath) {
-//     return new Promise((resolve, reject) => {
-//         fs.readFile(enteredPath, 'utf8', (error, data) =>
-//         {
-//             if(error) return reject(error);
-//             return resolve(data);
-//         });
-//     });
+// function isDir(enteredPath) {
+
 // }
 
 function getLinks(enteredPath) {
@@ -33,9 +27,24 @@ function getLinks(enteredPath) {
         fs.readFile(enteredPath, 'utf8', (error, data) =>
         {
             if(error) return reject(error);
-            return resolve(console.log(data.match(regexLinks)));
+            return resolve(data.match(regexLinks));
         });
     });
 }
 
-module.exports = {pathValidation, getLinks}
+function linksToObjects(data, path) {
+    const textRegex = /\[(\w+.+?)\]/gi;
+    const urlRegex = /\((\w+.+?)\)/gi;
+    let arrayO =[];
+    let n = data.length;
+
+    data.forEach(element => {
+        let linkURL = element.match(urlRegex);
+        let linkText = element.match(textRegex);
+
+        arrayO.push({href: linkURL, text: linkText, file: path})
+    });
+    console.log(arrayO);
+}
+
+module.exports = {pathValidation, getLinks, linksToObjects}

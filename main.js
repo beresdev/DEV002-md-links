@@ -16,6 +16,24 @@ function pathValidation(enteredPath) {
     }
 }
 
+function isDir(enteredPath) {
+    fs.stat(enteredPath, (error, stats) => {
+        if(error) {
+            console.error(error)
+            return;
+        } else if(stats.isDirectory() == false) {
+            console.log("No es un directorio");
+        } else if(stats.isDirectory()== true) {
+            console.log("Es un directorio")
+        }
+    })
+}
+
+function readDirectory (enteredPath) {
+    let files = fs.readdirSync(enteredPath, ['utf-8', true]);
+    console.log(files)
+}
+
 function ismdFile(enteredPath) {
     if(path.extname(enteredPath) === ".md")
     {
@@ -54,4 +72,4 @@ function linksToObjects(data, path) {
     console.log(arrayO);
 }
 
-module.exports = {pathValidation, ismdFile, getLinks, linksToObjects}
+module.exports = {pathValidation, isDir, readDirectory, ismdFile, getLinks, linksToObjects}

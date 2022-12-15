@@ -1,6 +1,14 @@
-const {pathValidation, ismdFile, getLinks, linksToObjects } = require('./main.js')
+const {pathValidation, isDir, readDirectory, ismdFile, getLinks, linksToObjects } = require('./main.js')
 
-let path = pathValidation('md_files/file_2.md');
+let path = pathValidation('./md_files');
+
+// function mdLinks(path) {
+
+// }
+
+isDir(path);
+
+readDirectory(path);
 
 ismdFile(path);
 

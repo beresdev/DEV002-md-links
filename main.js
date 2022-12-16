@@ -1,7 +1,8 @@
 const fs = require('fs');
 const resolve  = require('path');
 let path = require('node:path');
-const process = require('process')
+const process = require('process');
+const axios = require('axios').default;
 
 function pathValidation(enteredPath) {
     if(path.isAbsolute(enteredPath))
@@ -70,6 +71,20 @@ function linksToObjects(data, path) {
     });
     console.log("Los links contienen la siguiente información: ");
     console.log(arrayO);
+    console.log(arrayO[0].href);
+    return arrayO;
 }
+
+// function httpRequest(link) {
+//         axios({
+//             method: 'get',
+//             url: 'link',
+//             responseType: 'stream'
+//           })
+//          .then(function (response) {
+//               console.log(response.data)
+//         });
+//     }
+
 
 module.exports = {pathValidation, isDir, readDirectory, ismdFile, getLinks, linksToObjects}

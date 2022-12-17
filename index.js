@@ -1,15 +1,11 @@
 const axios = require('axios').default;
 
-const {pathValidation, isDir, ismdFile, getLinks, linksToObjects } = require('./main.js')
+const {pathValidation, isDir, ismdFile, getLinks, linksToObjects, httpRequest } = require('./main.js')
 
 let path = pathValidation('./md_files/file_1.md');
 
+let validate = true;
 
-
-
-// function mdLinks(path) {
-
-// }
 
 isDir(path);
 // , readDirectory,
@@ -17,17 +13,15 @@ isDir(path);
 
 ismdFile(path);
 
-axios({
-    method: 'get',
-    url: 'https://es.wikipedia.org/wiki/Markdown',
-    responseType: 'stream'
-  })
- .then(function (response) {
-      console.log(response.status)
-      console.log(response.statusText)
-});
 
+if (validate == false) {
+    getLinks(path)
+        .then(data => linksToObjects(data,path))
+        .catch(error => console.log(error));
+} else {
+    getLinks(path)
+        .then(data => linksToObjects(data,path))
+        .then(data => httpRequest(data))
+        .catch(error => console.log(error));
+}
 
-getLinks(path)
-    .then(data => linksToObjects(data,path))
-    .catch(error => console.log(error));

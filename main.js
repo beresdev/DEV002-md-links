@@ -71,20 +71,44 @@ function linksToObjects(data, path) {
     });
     console.log("Los links contienen la siguiente información: ");
     console.log(arrayO);
-    console.log(arrayO[0].href);
     return arrayO;
 }
 
-// function httpRequest(link) {
-//         axios({
-//             method: 'get',
-//             url: 'link',
-//             responseType: 'stream'
-//           })
-//          .then(function (response) {
-//               console.log(response.data)
-//         });
-//     }
+function httpRequest(data) {
+    let arrayO =[];
+
+    data.forEach(element => {
+        let status;
+        let ok;
+
+        axios({
+            method: 'get',
+            url:`${element.href}`,
+            responseType: 'stream'
+          })
+        .then(function(response) {
+            status = response.status;
+            ok = response.statusText;
+            arrayO.push({status: status, ok: ok})
+            console.log(arrayO);
+            return arrayO;
+        })
+        // .then(function(response) {
+        //     console.log(response)
+        //     return response
+        // })
+        // .catch(function(error) {
+        //     if(error.response) {
+        //         status = error.response.status;
+        //         ok = 'fail';
+        //         arrayO.push({status: status, ok: ok})
+        //         return arrayO;
+        //     }
+        //})
+    });
+}
 
 
-module.exports = {pathValidation, isDir, readDirectory, ismdFile, getLinks, linksToObjects}
+
+
+module.exports = {pathValidation, isDir, readDirectory, ismdFile, getLinks, linksToObjects, httpRequest}

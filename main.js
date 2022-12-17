@@ -70,7 +70,7 @@ function linksToObjects(data, path) {
         arrayO.push({href: linkURL, text: linkText, file: path})
     });
     console.log("Los links contienen la siguiente información: ");
-    console.log(arrayO);
+    // console.log(arrayO);
     return arrayO;
 }
 
@@ -93,10 +93,6 @@ function httpRequest(data) {
             console.log(arrayO);
             return arrayO;
         })
-        // .then(function(response) {
-        //     console.log(response)
-        //     return response
-        // })
         // .catch(function(error) {
         //     if(error.response) {
         //         status = error.response.status;
@@ -105,10 +101,28 @@ function httpRequest(data) {
         //         return arrayO;
         //     }
         //})
+
     });
+}
+
+function httpRequest2(data) {
+    let promises = [];
+    data.forEach(element => {
+
+        let axiosPromise = axios({
+            method: 'get',
+            url:`${element.href}`,
+            responseType: 'stream'
+          })
+          .then(response => {
+            element.patito = true;
+          });
+          promises.push(axiosPromise);
+    })
+    Promise.all(promises).then((res) => console.log(`done ${res.length}`));
+    return data;
 }
 
 
 
-
-module.exports = {pathValidation, isDir, readDirectory, ismdFile, getLinks, linksToObjects, httpRequest}
+module.exports = {pathValidation, isDir, readDirectory, ismdFile, getLinks, linksToObjects, httpRequest, httpRequest2}

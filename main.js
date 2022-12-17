@@ -115,12 +115,18 @@ function httpRequest2(data) {
             responseType: 'stream'
           })
           .then(response => {
-            element.patito = true;
+            element.status = response.status;
+            element.ok = response.statusText;
+            return element;
+          })
+          .catch(error => {
+            element.status = error?.response?.status;
+            element.ok = 'fail';
+            return element;
           });
           promises.push(axiosPromise);
     })
-    Promise.all(promises).then((res) => console.log(`done ${res.length}`));
-    return data;
+    return Promise.all(promises);
 }
 
 

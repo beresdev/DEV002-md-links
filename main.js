@@ -18,16 +18,12 @@ function pathValidation(enteredPath) {
 }
 
 function isDir(enteredPath) {
-    fs.stat(enteredPath, (error, stats) => {
-        if(error) {
-            console.error(error)
-            return;
-        } else if(stats.isDirectory() == false) {
-            console.log("No es un directorio");
-        } else if(stats.isDirectory()== true) {
-            console.log("Es un directorio")
-        }
-    })
+    try {
+        const stats = fs.statSync(enteredPath);
+        return stats.isDirectory();
+      } catch (err) {
+        console.error(err);
+      }
 }
 
 function readDirectory (enteredPath) {
@@ -45,18 +41,20 @@ function ismdFile(enteredPath) {
 }
 
 function getLinks(enteredPath) {
-    const regexLinks = /\[(.+)\]\((https?:\/\/[^\s]+)(?: "(.+)")?\)|(https?:\/\/[^\s]+)/ig;
+    const regexLinks = /\[(.+?)\]\((https?:\/\/[^\s]+)(?: "(.+)")?\)|(https?:\/\/[^\s]+)/ig;
+    
     return new Promise((res, rej) => {
         fs.readFile(enteredPath, 'utf8', (error, data) =>
         {
             if(error) return rej(error);
+            console.log(data.match(regexLinks));
             return res(data.match(regexLinks));
         });
     });
 }
 
 function linksToObjects(data, path) {
-    const urlRegex = /\((\w+.+?)\)/gi;
+    const urlRegex = /\((https?:\/\/[^\s]+)(?: "(.+)")?\)|(https?:\/\/[^\s]+)/ig;
     const textRegex = /\[(\w+.+?)\]/gi;
     let arrayO =[];
     let n = data.length;
@@ -74,38 +72,38 @@ function linksToObjects(data, path) {
     return arrayO;
 }
 
+// function httpRequest(data) {
+//     let arrayO =[];
+
+//     data.forEach(element => {
+//         let status;
+//         let ok;
+
+//         axios({
+//             method: 'get',
+//             url:`${element.href}`,
+//             responseType: 'stream'
+//           })
+//         .then(function(response) {
+//             status = response.status;
+//             ok = response.statusText;
+//             arrayO.push({status: status, ok: ok})
+//             console.log(arrayO);
+//             return arrayO;
+//         })
+//         // .catch(function(error) {
+//         //     if(error.response) {
+//         //         status = error.response.status;
+//         //         ok = 'fail';
+//         //         arrayO.push({status: status, ok: ok})
+//         //         return arrayO;
+//         //     }
+//         //})
+
+//     });
+// }
+
 function httpRequest(data) {
-    let arrayO =[];
-
-    data.forEach(element => {
-        let status;
-        let ok;
-
-        axios({
-            method: 'get',
-            url:`${element.href}`,
-            responseType: 'stream'
-          })
-        .then(function(response) {
-            status = response.status;
-            ok = response.statusText;
-            arrayO.push({status: status, ok: ok})
-            console.log(arrayO);
-            return arrayO;
-        })
-        // .catch(function(error) {
-        //     if(error.response) {
-        //         status = error.response.status;
-        //         ok = 'fail';
-        //         arrayO.push({status: status, ok: ok})
-        //         return arrayO;
-        //     }
-        //})
-
-    });
-}
-
-function httpRequest2(data) {
     let promises = [];
     data.forEach(element => {
 
@@ -121,7 +119,7 @@ function httpRequest2(data) {
           })
           .catch(error => {
             element.status = error?.response?.status;
-            element.ok = 'fail';
+            element.ok = 'FAIL';
             return element;
           });
           promises.push(axiosPromise);
@@ -131,4 +129,4 @@ function httpRequest2(data) {
 
 
 
-module.exports = {pathValidation, isDir, readDirectory, ismdFile, getLinks, linksToObjects, httpRequest, httpRequest2}
+module.exports = {pathValidation, isDir, readDirectory, ismdFile, getLinks, linksToObjects, httpRequest}

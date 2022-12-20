@@ -29,6 +29,7 @@ function isDir(enteredPath) {
 function readDirectory (enteredPath) {
     let files = fs.readdirSync(enteredPath, ['utf-8', true]);
     console.log(files)
+    return files;
 }
 
 function ismdFile(enteredPath) {
@@ -42,12 +43,10 @@ function ismdFile(enteredPath) {
 
 function getLinks(enteredPath) {
     const regexLinks = /\[(.+?)\]\((https?:\/\/[^\s]+)(?: "(.+)")?\)|(https?:\/\/[^\s]+)/ig;
-    
     return new Promise((res, rej) => {
         fs.readFile(enteredPath, 'utf8', (error, data) =>
         {
             if(error) return rej(error);
-            console.log(data.match(regexLinks));
             return res(data.match(regexLinks));
         });
     });

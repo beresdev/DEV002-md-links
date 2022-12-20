@@ -1,17 +1,27 @@
-const axios = require('axios').default;
-
 const {pathValidation, isDir, ismdFile, getLinks, linksToObjects, httpRequest, readDirectory} = require('./main.js')
 
-let path = pathValidation('./md_files/file_2.md');
+let path = pathValidation('./md_files/');
 
 let validate = true;
 
 let validateDir = isDir(path);
 
+let files;
+
 if (validateDir === true)  {
         console.log("leyendo directorio ...")
-        readDirectory(path)
+        files = readDirectory(path)
+} else {
+    console.log('No es directorio')
 }
+
+function readingDirectoryFiles(array, path) {
+array.forEach(element => {
+    console.log(path.basename(element.path))
+});
+}
+
+readingDirectoryFiles(files,path);
 
 // dir(path, validateDir);
 

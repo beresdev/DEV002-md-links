@@ -1,51 +1,55 @@
 const {pathValidation, isDir, ismdFile, getLinks, linksToObjects, httpRequest, readDirectory} = require('./main.js')
+const path = require('node:path');
 
-let path = pathValidation('./md_files/');
+let epath = pathValidation('./md_files/');
 
-let validate = true;
+let validate = false;
 
-let validateDir = isDir(path);
+// let validateDir = isDir(path);
 
 let files;
 
-if (validateDir === true)  {
+directoryFilesValidation(epath);
+
+function directoryFilesValidation(path) {
+    if (isDir(path) === true)  {
         console.log("leyendo directorio ...")
         files = readDirectory(path)
-} else {
-    console.log('No es directorio')
+        readingDirectoryFiles(files,path);
+    } else if(ismdFile(path) === true) {
+        linksAnalisis(path)
+    } else {
+        console.log("ruta inválida")
+    }
 }
 
-function readingDirectoryFiles(array, path) {
+function readingDirectoryFiles(array, epath) {
 array.forEach(element => {
-    console.log(path.basename(element.path))
+    //console.log(element)
+    let newPath = path.join(epath,element);
+    //console.log(newPath)
+    directoryFilesValidation(newPath);
 });
 }
 
-readingDirectoryFiles(files,path);
-
-// dir(path, validateDir);
+//readingDirectoryFiles(files,path);
 
 
-// function dir (path, validateDir) {
-//     if (validateDir == true)  {
-//         console.log("leyendo directorio ...")
-//         readDirectory(path)
-//     }
-//     console.log("dir no leido")
-// }
+//ismdFile(path);
 
-ismdFile(path);
+//linksAnalisis(path);
 
-
-if (validate == false) {
-    getLinks(path)
-        .then(data => linksToObjects(data,path))
-        .catch(error => console.log(error));
-} else {
-    getLinks(path)
-        .then(data => linksToObjects(data,path))
-        .then(data => httpRequest(data))
-        .then(data => console.log(data))
-        .catch(error => console.log(error));
+function linksAnalisis (path) {
+    if (validate == false) {
+        getLinks(path)
+            .then(data => linksToObjects(data,path))
+            .then(data => console.log(data))
+            .catch(error => console.log(error));
+    } else {
+        getLinks(path)
+            .then(data => linksToObjects(data,path))
+            .then(data => httpRequest(data))
+            .then(data => console.log(data))
+            .catch(error => console.log(error));
+    }
 }
-

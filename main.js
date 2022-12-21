@@ -1,6 +1,6 @@
 const fs = require('fs');
 const resolve  = require('path');
-let path = require('node:path');
+const path = require('node:path');
 const process = require('process');
 const axios = require('axios').default;
 
@@ -18,13 +18,28 @@ function pathValidation(enteredPath) {
 }
 
 function isDir(enteredPath) {
-    try {
-        const stats = fs.statSync(enteredPath);
-        return stats.isDirectory();
-      } catch (err) {
-        console.error(err);
-      }
+    const stats =fs.statSync(enteredPath);
+    let res = stats.isDirectory();
+    let base = path.basename(enteredPath);
+
+    if (res === true) {
+        console.log(base + " es un directorio")
+        return true;
+    } else {
+        return false
+    }
 }
+
+// function isDir(enteredPath) {
+//     let base = path.basename(enteredPath);
+//     try {
+//         const stats = fs.statSync(enteredPath);
+//         console.log(base + " es un directorio")
+//         return stats.isDirectory();
+//       } catch (err) {
+//         console.error(err);
+//       }
+// }
 
 function readDirectory (enteredPath) {
     let files = fs.readdirSync(enteredPath, ['utf-8', true]);
@@ -33,11 +48,14 @@ function readDirectory (enteredPath) {
 }
 
 function ismdFile(enteredPath) {
+    let base = path.basename(enteredPath);
     if(path.extname(enteredPath) === ".md")
     {
-        console.log("Es un archivo Markdown")
+        console.log(base + " es un archivo Markdown")
+        return true;
     } else {
         console.log("Es un archivo no válido")
+        return false;
     }
 }
 
@@ -52,23 +70,28 @@ function getLinks(enteredPath) {
     });
 }
 
-function linksToObjects(data, path) {
+function linksToObjects(data, enteredPath) {
     const urlRegex = /\((https?:\/\/[^\s]+)(?: "(.+)")?\)|(https?:\/\/[^\s]+)/ig;
     const textRegex = /\[(\w+.+?)\]/gi;
     let arrayO =[];
-    let n = data.length;
+    let base = path.basename(enteredPath);
+    // let n = data.length;
 
-    data.forEach(element => {
-        let extractedURL = element.match(urlRegex).toString();
-        let linkURL = extractedURL.slice(1,-1);
-        let extractedText = element.match(textRegex).toString();
-        let linkText = extractedText.slice(1,-1);
-
-        arrayO.push({href: linkURL, text: linkText, file: path})
-    });
-    console.log("Los links contienen la siguiente información: ");
-    // console.log(arrayO);
-    return arrayO;
+    if(data === null) {
+        console.log("No se encontraron links en " + base)
+    } else {
+        data.forEach(element => {
+            let extractedURL = element.match(urlRegex).toString();
+            let linkURL = extractedURL.slice(1,-1);
+            let extractedText = element.match(textRegex).toString();
+            let linkText = extractedText.slice(1,-1);
+    
+            arrayO.push({href: linkURL, text: linkText, file: enteredPath})
+        });
+        console.log("Los links de " + base + " contienen la siguiente información: ");
+        // console.log(arrayO);
+        return arrayO;
+    }
 }
 
 // function httpRequest(data) {
@@ -125,7 +148,5 @@ function httpRequest(data) {
     })
     return Promise.all(promises);
 }
-
-
 
 module.exports = {pathValidation, isDir, readDirectory, ismdFile, getLinks, linksToObjects, httpRequest}

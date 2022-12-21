@@ -3,7 +3,7 @@ const path = require('node:path');
 
 let epath = pathValidation('./md_files/');
 
-let validate = false;
+let validate = true;
 
 // let validateDir = isDir(path);
 

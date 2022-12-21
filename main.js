@@ -77,8 +77,9 @@ function linksToObjects(data, enteredPath) {
     let base = path.basename(enteredPath);
     // let n = data.length;
 
-    if(data === null) {
+    if(data === null || data === undefined) {
         console.log("No se encontraron links en " + base)
+        return ("Sin data")
     } else {
         data.forEach(element => {
             let extractedURL = element.match(urlRegex).toString();
@@ -127,26 +128,31 @@ function linksToObjects(data, enteredPath) {
 
 function httpRequest(data) {
     let promises = [];
-    data.forEach(element => {
-
-        let axiosPromise = axios({
-            method: 'get',
-            url:`${element.href}`,
-            responseType: 'stream'
-          })
-          .then(response => {
-            element.status = response.status;
-            element.ok = response.statusText;
-            return element;
-          })
-          .catch(error => {
-            element.status = error?.response?.status;
-            element.ok = 'FAIL';
-            return element;
-          });
-          promises.push(axiosPromise);
-    })
-    return Promise.all(promises);
+    if (data === null || data === undefined) {
+        console.log("sin urls para consultar")
+        return ("sin urls")
+    } else {
+        // console.log(data)
+        data.forEach(element => {
+            let axiosPromise = axios({
+                method: 'get',
+                url:`${element.href}`,
+                responseType: 'stream'
+              })
+              .then(response => {
+                element.status = response.status;
+                element.ok = response.statusText;
+                return element;
+              })
+              .catch(error => {
+                element.status = error?.response?.status;
+                element.ok = 'FAIL';
+                return element;
+              });
+              promises.push(axiosPromise);
+        })
+        return Promise.all(promises);
+    }
 }
 
 module.exports = {pathValidation, isDir, readDirectory, ismdFile, getLinks, linksToObjects, httpRequest}

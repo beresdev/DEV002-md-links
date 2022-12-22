@@ -30,19 +30,10 @@ function isDir(enteredPath) {
     }
 }
 
-// function isDir(enteredPath) {
-//     let base = path.basename(enteredPath);
-//     try {
-//         const stats = fs.statSync(enteredPath);
-//         console.log(base + " es un directorio")
-//         return stats.isDirectory();
-//       } catch (err) {
-//         console.error(err);
-//       }
-// }
-
 function readDirectory (enteredPath) {
     let files = fs.readdirSync(enteredPath, ['utf-8', true]);
+    let base = path.basename(enteredPath);
+    console.log(base + " contiene: ")
     console.log(files)
     return files;
 }
@@ -64,8 +55,12 @@ function getLinks(enteredPath) {
     return new Promise((res, rej) => {
         fs.readFile(enteredPath, 'utf8', (error, data) =>
         {
-            if(error) return rej(error);
-            return res(data.match(regexLinks));
+            if(error) {
+                console.log("Error: ", error)
+                return rej(error);
+            } else {
+                return res(data.match(regexLinks));
+            }
         });
     });
 }
@@ -75,64 +70,29 @@ function linksToObjects(data, enteredPath) {
     const textRegex = /\[(\w+.+?)\]/gi;
     let arrayO =[];
     let base = path.basename(enteredPath);
-    // let n = data.length;
 
     if(data === null || data === undefined) {
         console.log("No se encontraron links en " + base)
-        return ("Sin data")
+        return null;
     } else {
         data.forEach(element => {
             let extractedURL = element.match(urlRegex).toString();
             let linkURL = extractedURL.slice(1,-1);
             let extractedText = element.match(textRegex).toString();
             let linkText = extractedText.slice(1,-1);
-    
             arrayO.push({href: linkURL, text: linkText, file: enteredPath})
         });
-        console.log("Los links de " + base + " contienen la siguiente información: ");
-        // console.log(arrayO);
         return arrayO;
     }
 }
 
-// function httpRequest(data) {
-//     let arrayO =[];
-
-//     data.forEach(element => {
-//         let status;
-//         let ok;
-
-//         axios({
-//             method: 'get',
-//             url:`${element.href}`,
-//             responseType: 'stream'
-//           })
-//         .then(function(response) {
-//             status = response.status;
-//             ok = response.statusText;
-//             arrayO.push({status: status, ok: ok})
-//             console.log(arrayO);
-//             return arrayO;
-//         })
-//         // .catch(function(error) {
-//         //     if(error.response) {
-//         //         status = error.response.status;
-//         //         ok = 'fail';
-//         //         arrayO.push({status: status, ok: ok})
-//         //         return arrayO;
-//         //     }
-//         //})
-
-//     });
-// }
-
 function httpRequest(data) {
     let promises = [];
+
     if (data === null || data === undefined) {
         console.log("sin urls para consultar")
-        return ("sin urls")
+        return null
     } else {
-        // console.log(data)
         data.forEach(element => {
             let axiosPromise = axios({
                 method: 'get',
@@ -155,4 +115,10 @@ function httpRequest(data) {
     }
 }
 
-module.exports = {pathValidation, isDir, readDirectory, ismdFile, getLinks, linksToObjects, httpRequest}
+function showObjectsArray(data, enteredPath) {
+    let base = path.basename(enteredPath);
+    console.log("Los links de " + base + " contienen la siguiente información: ")
+    console.log(data)
+}
+
+module.exports = {pathValidation, isDir, readDirectory, ismdFile, getLinks, linksToObjects, httpRequest, showObjectsArray}

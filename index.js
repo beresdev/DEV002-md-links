@@ -7,8 +7,7 @@ let validate = true;
 
 let files;
 
-//linksAnalisis(epath)
-//console.log("!!!!!!START!!!!!!")
+console.log("!!!!!!START!!!!!!")
 
 let promises = [];
 let promisesD = [];
@@ -22,7 +21,8 @@ function directoryFilesValidation(epath) {
         files = readDirectory(epath)
         files.forEach(element => {
             let newPath = path.join(epath,element);
-            directoryFilesValidation(newPath).then(() => console.log("!!!!!!FINISH!!!!!!"));
+            let base = path.basename(epath);
+            directoryFilesValidation(newPath).then(() => console.log("FINISH " + base + " DIRECTORY"));
         })
     } else if(ismdFile(epath) === true) {
         promises.push(linksAnalisis(epath))

@@ -1,48 +1,65 @@
-const {pathValidation, isDir, ismdFile, getLinks, linksToObjects, httpRequest, readDirectory, showObjectsArray} = require('./main.js')
+const {pathValidation, isDir, ismdFile, readDirectory, linksAnalisis} = require('./main.js')
 const path = require('node:path');
 
-let epath = pathValidation('./md_files/mdfiles2/');
-
-let validate = true;
-
-let files;
-
-console.log("!!!!!!START!!!!!!")
-
-let promises = [];
-let promisesD = [];
-
-promisesD.push(directoryFilesValidation(epath).then(() => console.log("!!!!!!FINISH!!!!!!")))
-Promise.all(promisesD).then(() => console.log("_______________________")) 
+let epath = './md_files/';
+let options = "stats";
 
 
-function directoryFilesValidation(epath) {
+
+mdLinks(epath, options)
+    .catch((error) => {
+        console.log("Sin resultados por error en ruta u opciones")
+    })
+
+function mdLinks(epath, options) {
+    console.log("Entrando a mdLinks")
+    let entryPath = pathValidation(epath);
+
+    return new Promise((res, rej) => {
+        if (options == null || options == undefined) {
+            console.log("options = null")
+            return res(
+                directoryFilesValidation(entryPath, null)
+            )
+        }
+        else if(options == "validate") {
+            console.log("options = validate")
+            return res (
+                directoryFilesValidation(entryPath,"validate")
+            )
+        }
+        else if(options == "stats") {
+            console.log("options = stats")
+            return res(
+                directoryFilesValidation(entryPath,"stats")
+            )
+        } 
+        else if(options === "stats-validate") {
+            console.log("stats-validate")
+            return res (
+                directoryFilesValidation(entryPath,"stats-validate")
+            )
+        }
+        else {
+            return rej(console.log("opcion inválida"))
+        }
+    })
+}
+
+function directoryFilesValidation(epath, options) {
+    let promises = [];
     if (isDir(epath) === true)  {
-        files = readDirectory(epath)
+        let files = readDirectory(epath)
         files.forEach(element => {
             let newPath = path.join(epath,element);
-            let base = path.basename(epath);
-            directoryFilesValidation(newPath).then(() => console.log("FINISH " + base + " DIRECTORY"));
+            directoryFilesValidation(newPath, options)
         })
     } else if(ismdFile(epath) === true) {
-        promises.push(linksAnalisis(epath))
+        promises.push(linksAnalisis(epath, options))
     } else {
         console.log("ruta inválida")
     }
     return Promise.all(promises)
 }
 
-function linksAnalisis (path) {
-    if (validate == false) {
-        getLinks(path)
-            .then(data => linksToObjects(data,path))
-            .then(data =>  showObjectsArray(data, path))
-            .catch(error => console.log(error));
-    } else {
-        return getLinks(path)
-                .then(data => linksToObjects(data,path))
-                .then(data => httpRequest(data))
-                .then(data =>  showObjectsArray(data, path))
-                .catch(error => console.log(error));
-    }
-}
+module.exports = {mdLinks}

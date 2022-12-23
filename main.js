@@ -2,7 +2,10 @@ const fs = require('fs');
 const resolve  = require('path');
 const path = require('node:path');
 const process = require('process');
+const { error } = require('console');
 const axios = require('axios').default;
+
+let base;
 
 function pathValidation(enteredPath) {
     if(path.isAbsolute(enteredPath))
@@ -18,11 +21,15 @@ function pathValidation(enteredPath) {
 }
 
 function isDir(enteredPath) {
-    const stats =fs.statSync(enteredPath);
+    const stats = fs.statSync(enteredPath);
     let res = stats.isDirectory();
-    let base = path.basename(enteredPath);
+    base = path.basename(enteredPath);
 
-    if (res === true) {
+    if(res == error) {
+        console.log("directorio inválido")
+        console.error(error);
+    }
+    else if (res === true) {
         console.log(base + " es un directorio")
         return true;
     } else {
@@ -32,14 +39,14 @@ function isDir(enteredPath) {
 
 function readDirectory (enteredPath) {
     let files = fs.readdirSync(enteredPath, ['utf-8', true]);
-    let base = path.basename(enteredPath);
+    base = path.basename(enteredPath);
     console.log(base + " contiene: ")
     console.log(files)
     return files;
 }
 
 function ismdFile(enteredPath) {
-    let base = path.basename(enteredPath);
+    base = path.basename(enteredPath);
     if(path.extname(enteredPath) === ".md")
     {
         console.log(base + " es un archivo Markdown")
@@ -69,7 +76,7 @@ function linksToObjects(data, enteredPath) {
     const urlRegex = /\((https?:\/\/[^\s]+)(?: "(.+)")?\)|(https?:\/\/[^\s]+)/ig;
     const textRegex = /\[(\w+.+?)\]/gi;
     let arrayO =[];
-    let base = path.basename(enteredPath);
+    base = path.basename(enteredPath);
 
     if(data === null || data === undefined) {
         console.log("No se encontraron links en " + base)
@@ -116,9 +123,66 @@ function httpRequest(data) {
 }
 
 function showObjectsArray(data, enteredPath) {
-    let base = path.basename(enteredPath);
+    base = path.basename(enteredPath);
     console.log("Los links de " + base + " contienen la siguiente información: ")
     console.log(data)
 }
 
-module.exports = {pathValidation, isDir, readDirectory, ismdFile, getLinks, linksToObjects, httpRequest, showObjectsArray}
+function linksAnalisis (path, option) {
+    if (option == false|| option === null || option === undefined) {
+        getLinks(path)
+            .then(data => linksToObjects(data,path))
+            .then(data =>  showObjectsArray(data, path))
+            .catch(error => console.log(error));
+    } else if(option === "validate"){
+        return getLinks(path)
+                .then(data => linksToObjects(data,path))
+                .then(data => httpRequest(data))
+                .then(data =>  showObjectsArray(data, path))
+                .catch(error => console.log(error));
+    } else if(option == "stats") {
+        return getLinks(path)
+                .then(data => linksToObjects(data,path))
+                .then(data => linksArrays(data))
+                .then(data => linkStats(data))
+                .then(data => printStats(data, path))
+    } 
+}
+
+function linksArrays(data) {
+    let array = [];
+    if(data == null) {
+        return array;
+    }
+    else {
+        return data.map(element => element.href)
+    }
+}
+
+function linkStats(data) {
+    let total = data.length;
+    let equals = 0;
+    let unique = 0;
+
+    for(let i = 0; i<= total-1; i++) {
+        if(data[i] === data[i+1]) {
+            equals = equals + 1;
+        }
+    }
+    unique = total - equals;
+
+    return {
+        Total: total, 
+        Unique: unique
+    }
+}
+
+function printStats(object, enteredPath) {
+    base = path.basename(enteredPath);
+    console.log("_______________________")
+    console.log("stats de: " + base)
+    console.log("_______________________")
+    console.log(object)
+}
+
+module.exports = {pathValidation, isDir, readDirectory, ismdFile, getLinks, linksToObjects, httpRequest, showObjectsArray, linksAnalisis}

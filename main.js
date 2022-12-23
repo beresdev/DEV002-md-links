@@ -210,4 +210,20 @@ function arrayOk(data) {
     return stats
 }
 
-module.exports = {pathValidation, isDir, readDirectory, ismdFile, getLinks, linksToObjects, httpRequest, showObjectsArray, linksAnalisis}
+function directoryFilesValidation(epath, options) {
+    let promises = [];
+    if (isDir(epath) === true)  {
+        let files = readDirectory(epath)
+        files.forEach(element => {
+            let newPath = path.join(epath,element);
+            directoryFilesValidation(newPath, options)
+        })
+    } else if(ismdFile(epath) === true) {
+        promises.push(linksAnalisis(epath, options))
+    } else {
+        console.log("ruta inválida")
+    }
+    return Promise.all(promises)
+}
+
+module.exports = {pathValidation, isDir, readDirectory, ismdFile, getLinks, linksToObjects, httpRequest, showObjectsArray, linksAnalisis, directoryFilesValidation}

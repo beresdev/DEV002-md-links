@@ -128,27 +128,6 @@ function showObjectsArray(data, enteredPath) {
     console.log(data)
 }
 
-function linksAnalisis (path, option) {
-    if (option == false|| option === null || option === undefined) {
-        getLinks(path)
-            .then(data => linksToObjects(data,path))
-            .then(data =>  showObjectsArray(data, path))
-            .catch(error => console.log(error));
-    } else if(option === "validate"){
-        return getLinks(path)
-                .then(data => linksToObjects(data,path))
-                .then(data => httpRequest(data))
-                .then(data =>  showObjectsArray(data, path))
-                .catch(error => console.log(error));
-    } else if(option == "stats") {
-        return getLinks(path)
-                .then(data => linksToObjects(data,path))
-                .then(data => linksArrays(data))
-                .then(data => linkStats(data))
-                .then(data => printStats(data, path))
-    } 
-}
-
 function linksArrays(data) {
     let array = [];
     if(data == null) {
@@ -183,6 +162,52 @@ function printStats(object, enteredPath) {
     console.log("stats de: " + base)
     console.log("_______________________")
     console.log(object)
+}
+
+function linksAnalisis (path, option) {
+    if (option == false|| option === null || option === undefined) {
+        getLinks(path)
+            .then(data => linksToObjects(data,path))
+            .then(data =>  showObjectsArray(data, path))
+            .catch(error => console.log(error));
+    } else if(option === "validate"){
+        return getLinks(path)
+                .then(data => linksToObjects(data,path))
+                .then(data => httpRequest(data))
+                .then(data =>  showObjectsArray(data, path))
+                .catch(error => console.log(error));
+    } else if(option == "stats") {
+        return getLinks(path)
+                .then(data => linksToObjects(data,path))
+                .then(data => linksArrays(data))
+                .then(data => linkStats(data))
+                .then(data => printStats(data, path))
+    } else if(option == "stats-validate") {
+        return getLinks(path)
+                .then(data => linksToObjects(data,path))
+                .then(data => httpRequest(data))
+                .then(data => arrayOk(data))
+                .then(data => printStats(data, path))
+    }
+}
+
+function arrayOk(data) {
+    let array = [];
+    let arrays = linksArrays(data);
+    let stats = linkStats(arrays);
+
+    if (data == null || data == undefined) {
+        return({Total: 0, Unique: 0, Broken: 0})
+    }
+
+    data.forEach(element => {
+        array.push(element.ok)
+    })
+
+    let broken = array.filter(element => element != 'OK').length;
+
+    stats.Broken = broken
+    return stats
 }
 
 module.exports = {pathValidation, isDir, readDirectory, ismdFile, getLinks, linksToObjects, httpRequest, showObjectsArray, linksAnalisis}

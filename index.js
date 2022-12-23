@@ -2,7 +2,7 @@ const {pathValidation, isDir, ismdFile, readDirectory, linksAnalisis} = require(
 const path = require('node:path');
 
 let epath = './md_files/';
-let options = "stats";
+let options = "stats-validate";
 
 
 

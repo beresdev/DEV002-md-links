@@ -1,6 +1,8 @@
 {
   "name": "md-links",
   "version": "0.1.0",
+  "description": "Get a links from md file",
+  "main": "index.js",
   "engines": {
     "node": ">=16.x"
   },
@@ -11,5 +13,11 @@
   },
   "dependencies": {
     "axios": "^1.2.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/beresdev/DEV002-md-links.git"
+  },
+  "author": "Berenice Hernández",
+  "license": "MIT"
 }

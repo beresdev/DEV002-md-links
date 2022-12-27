@@ -19,5 +19,6 @@
     "url": "https://github.com/beresdev/DEV002-md-links.git"
   },
   "author": "Berenice Hernández",
-  "license": "MIT"
+  "license": "MIT",
+  "bin": "./index.js"
 }

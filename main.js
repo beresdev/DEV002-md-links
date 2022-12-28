@@ -8,7 +8,10 @@ const axios = require('axios').default;
 let base;
 
 function pathValidation(enteredPath) {
-    if(path.isAbsolute(enteredPath))
+    if(enteredPath === undefined) {
+        return undefined
+    }
+    else if(path.isAbsolute(enteredPath))
     {   
         console.log("La ruta ingresada es absoluta: " + enteredPath)
         return enteredPath;
@@ -97,7 +100,6 @@ function httpRequest(data) {
     let promises = [];
 
     if (data === null || data === undefined) {
-        console.log("sin urls para consultar")
         return null
     } else {
         data.forEach(element => {
@@ -124,6 +126,9 @@ function httpRequest(data) {
 
 function showObjectsArray(data, enteredPath) {
     base = path.basename(enteredPath);
+    if(data === null) {
+        return null
+    }
     console.log("Los links de " + base + " contienen la siguiente información: ")
     console.log(data)
 }
@@ -164,25 +169,25 @@ function printStats(object, enteredPath) {
     console.log(object)
 }
 
-function linksAnalisis (path, option) {
-    if (option == false|| option === null || option === undefined) {
+function linksAnalisis (path, option1, option2) {
+    if (option1 === undefined && option2 === undefined) {
         getLinks(path)
             .then(data => linksToObjects(data,path))
             .then(data =>  showObjectsArray(data, path))
             .catch(error => console.log(error));
-    } else if(option === "validate"){
+    } else if(option1 === "--validate" && option2 == undefined){
         return getLinks(path)
                 .then(data => linksToObjects(data,path))
                 .then(data => httpRequest(data))
                 .then(data =>  showObjectsArray(data, path))
                 .catch(error => console.log(error));
-    } else if(option == "stats") {
+    } else if(option1 == "--stats" && option2 == undefined) {
         return getLinks(path)
                 .then(data => linksToObjects(data,path))
                 .then(data => linksArrays(data))
                 .then(data => linkStats(data))
                 .then(data => printStats(data, path))
-    } else if(option == "stats-validate") {
+    } else if(option1 == "--stats" && option2 == "--validate") {
         return getLinks(path)
                 .then(data => linksToObjects(data,path))
                 .then(data => httpRequest(data))
@@ -210,16 +215,16 @@ function arrayOk(data) {
     return stats
 }
 
-function directoryFilesValidation(epath, options) {
+function directoryFilesValidation(epath, option1, option2) {
     let promises = [];
     if (isDir(epath) === true)  {
         let files = readDirectory(epath)
         files.forEach(element => {
             let newPath = path.join(epath,element);
-            directoryFilesValidation(newPath, options)
+            directoryFilesValidation(newPath, option1, option2)
         })
     } else if(ismdFile(epath) === true) {
-        promises.push(linksAnalisis(epath, options))
+        promises.push(linksAnalisis(epath, option1, option2))
     } else {
         console.log("ruta inválida")
     }

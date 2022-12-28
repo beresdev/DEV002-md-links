@@ -12,11 +12,13 @@ El análisis de los links consiste en obtener la siguiente información:
 
 ## Instalación:
 
-Desde consola y ejecuta el siguiente comando:
+Desde tu consola ejecuta:
 
 ```
 npm i md-links-beresdev
 ```
+
+## Modo de ejecución
 
 Debe ejecutarse de la siguiente
 manera a través de la **terminal**:

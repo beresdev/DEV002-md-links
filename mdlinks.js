@@ -8,6 +8,8 @@ function mdLinks(epath, option1, option2) {
     return new Promise((res, rej) => {
         if(entryPath === undefined) {
             return rej(console.log("No ingresaste ruta(path) válida "))
+        } if(option1 === undefined) {
+            return res(directoryFilesValidation(entryPath, option1, option2))
         } if((option1 === "--stats" || option1 === "--validate")&& option2 == undefined) {
             return res(directoryFilesValidation(entryPath, option1, option2))
         } if(option1 === "--stats" && option2 === "--validate") {

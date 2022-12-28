@@ -15,7 +15,7 @@ El análisis de los links consiste en obtener la siguiente información:
 Desde tu consola ejecuta:
 
 ```
-npm i md-links-beresdev
+npm install md-links-beresdev
 ```
 
 ## Modo de ejecución

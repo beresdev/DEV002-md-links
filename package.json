@@ -1,6 +1,6 @@
 {
   "name": "md-links-beresdev",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Get a links from md file",
   "main": "index.js",
   "engines": {
@@ -12,7 +12,8 @@
     "commit": "51e941edf1cc991930aefd7dd9c406a7c43741c1"
   },
   "dependencies": {
-    "axios": "^1.2.1"
+    "axios": "^1.2.1",
+    "md-links-beresdev": "^0.1.1"
   },
   "repository": {
     "type": "git",

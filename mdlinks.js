@@ -1,37 +1,21 @@
 const {pathValidation, directoryFilesValidation} = require('./main.js')
 const path = require('node:path');
 
-function mdLinks(epath, options) {
+function mdLinks(epath, option1, option2) {
     console.log("Entrando a mdLinks")
     let entryPath = pathValidation(epath);
 
     return new Promise((res, rej) => {
-        if (options == null || options == undefined) {
-            console.log("options = null")
-            return res(
-                directoryFilesValidation(entryPath, null)
-            )
-        }
-        else if(options == "validate") {
-            console.log("options = validate")
-            return res (
-                directoryFilesValidation(entryPath,"validate")
-            )
-        }
-        else if(options == "stats") {
-            console.log("options = stats")
-            return res(
-                directoryFilesValidation(entryPath,"stats")
-            )
-        } 
-        else if(options === "stats-validate") {
-            console.log("stats-validate")
-            return res (
-                directoryFilesValidation(entryPath,"stats-validate")
-            )
-        }
-        else {
-            return rej(console.log("opcion inválida"))
+        if(entryPath === undefined) {
+            return rej(console.log("No ingresaste ruta(path) válida "))
+        } if((option1 === "--stats" || option1 === "--validate")&& option2 == undefined) {
+            return res(directoryFilesValidation(entryPath, option1, option2))
+        } if(option1 === "--stats" && option2 === "--validate") {
+            return res(directoryFilesValidation(entryPath, option1, option2))
+        } else if ((option1 != "--stats" || option1 != "--validate")&& option2 == undefined) {
+            return rej(console.log("Parametro incorrecto"))
+        } else if ((option1 != "--stats" && option2 != "--validate") || (option1 == "--stats" && option2 != "--validate") || (option1 != "--stats" && option2 == "--validate")) {
+            return rej(console.log("Alguno(s) de tus parametros es(son) incorrecto(s)"))
         }
     })
 }

@@ -161,6 +161,25 @@ function linkStats(data) {
     }
 }
 
+function arrayOk(data) {
+    let array = [];
+    let arrays = linksArrays(data);
+    let stats = linkStats(arrays);
+
+    if (data == null || data == undefined) {
+        return({Total: 0, Unique: 0, Broken: 0})
+    }
+
+    data.forEach(element => {
+        array.push(element.ok)
+    })
+
+    let broken = array.filter(element => element != 'OK').length;
+
+    stats.Broken = broken
+    return stats
+}
+
 function printStats(object, enteredPath) {
     base = path.basename(enteredPath);
     console.log("_______________________")
@@ -196,24 +215,6 @@ function linksAnalisis (path, option1, option2) {
     }
 }
 
-function arrayOk(data) {
-    let array = [];
-    let arrays = linksArrays(data);
-    let stats = linkStats(arrays);
-
-    if (data == null || data == undefined) {
-        return({Total: 0, Unique: 0, Broken: 0})
-    }
-
-    data.forEach(element => {
-        array.push(element.ok)
-    })
-
-    let broken = array.filter(element => element != 'OK').length;
-
-    stats.Broken = broken
-    return stats
-}
 
 function directoryFilesValidation(epath, option1, option2) {
     let promises = [];
